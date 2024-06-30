@@ -20,8 +20,13 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Manager\MakePaymentInterface:
+        alias: App\Manager\AciManager
+
     App\Manager\Shift4Manager:
         arguments: []
+        public: true
 
     App\Manager\AciManager:
         arguments: []
+        public: true
