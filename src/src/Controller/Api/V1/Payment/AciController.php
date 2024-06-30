@@ -5,6 +5,7 @@ namespace App\Controller\Api\V1\Payment;
 use App\Dto\PaymentDto;
 use App\Dto\TransactionDTO;
 use App\Manager\AciManager;
+use App\Manager\MakePaymentInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
@@ -17,7 +18,7 @@ class AciController extends AbstractController
     /** @var AciManager */
     private $aciManager;
 
-    public function __construct(AciManager $aciManager)
+    public function __construct(MakePaymentInterface $aciManager)
     {
         $this->aciManager = $aciManager;
     }

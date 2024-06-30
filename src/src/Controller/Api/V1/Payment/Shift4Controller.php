@@ -4,6 +4,7 @@ namespace App\Controller\Api\V1\Payment;
 
 use App\Dto\PaymentDto;
 use App\Dto\TransactionDTO;
+use App\Manager\MakePaymentInterface;
 use App\Manager\Shift4Manager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;

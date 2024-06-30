@@ -6,7 +6,7 @@ use App\Dto\TransactionDTO;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
-class Shift4Manager
+class Shift4Manager implements MakePaymentInterface
 {
     /** @var Client  */
     private $client;

@@ -7,7 +7,7 @@ use App\Dto\TransactionDTO;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
-class AciManager
+class AciManager implements MakePaymentInterface
 {
     private $client;
     private $url;

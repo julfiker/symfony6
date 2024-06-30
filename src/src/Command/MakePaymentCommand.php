@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Dto\PaymentDto;
 use App\Dto\TransactionDTO;
 use App\Manager\AciManager;
+use App\Manager\MakePaymentInterface;
 use App\Manager\Shift4Manager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -17,22 +18,31 @@ use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 
 #[AsCommand(
     name: 'app:make-payment',
-    description: 'Add a short description for your command',
+    description: 'Its about to make payment with one option and comma separated value in arguments',
 )]
 class MakePaymentCommand extends Command
 {
 
+    /** @var AciManager  */
     private $aciManager;
+
+    /** @var Shift4Manager  */
     private $shift4Manager;
+
+    /** @var  */
     private $response;
 
-    public function __construct(AciManager $aciManager,Shift4Manager $shift4Manager)
+    public function __construct(MakePaymentInterface $aciManager,Shift4Manager $shift4Manager)
     {
         $this->aciManager = $aciManager;
         $this->shift4Manager = $shift4Manager;
         parent::__construct();
     }
 
+    /**
+     * Added individual argument to make a transaction
+     * todo:Use one argument with is_array.
+     */
     protected function configure(): void
     {
         $this
