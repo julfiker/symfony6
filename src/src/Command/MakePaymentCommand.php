@@ -14,7 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(
     name: 'app:make-payment',
@@ -32,10 +32,15 @@ class MakePaymentCommand extends Command
     /** @var  */
     private $response;
 
-    public function __construct(MakePaymentInterface $aciManager,Shift4Manager $shift4Manager)
+    private $serializer;
+
+    public function __construct(MakePaymentInterface $aciManager,
+                                Shift4Manager $shift4Manager,
+                                SerializerInterface $serializer)
     {
         $this->aciManager = $aciManager;
         $this->shift4Manager = $shift4Manager;
+        $this->serializer = $serializer;
         parent::__construct();
     }
 
@@ -74,6 +79,8 @@ class MakePaymentCommand extends Command
             $cardCvv
         );
 
+        $io->info('Executing with '.$input->getOption('m'));
+
         if ($input->getOption('m') == 'aci') {
             $this->response = $this->aciManager->makePayment($paymentDto);
         }
@@ -86,7 +93,7 @@ class MakePaymentCommand extends Command
 
         if ($this->response instanceof TransactionDTO) {
             $io->success('Transaction was success with following response');
-            $io->writeln(json_decode(json_encode($this->response), true));
+            $io->writeln($this->serializer->serialize($this->response, 'json'));
         } else {
             $io->error($this->response['error']);
         }
