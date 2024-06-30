@@ -6,8 +6,10 @@ use App\Dto\PaymentDto;
 use App\Dto\TransactionDTO;
 use App\Manager\AciManager;
 use App\Manager\MakePaymentInterface;
+use http\Env\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\WithHttpStatus;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 
@@ -18,6 +20,10 @@ class AciController extends AbstractController
     /** @var AciManager */
     private $aciManager;
 
+    /**
+     * AciController constructor.
+     * @param MakePaymentInterface $aciManager
+     */
     public function __construct(MakePaymentInterface $aciManager)
     {
         $this->aciManager = $aciManager;
@@ -27,6 +33,9 @@ class AciController extends AbstractController
     public function payment(#[MapRequestPayload] PaymentDto $paymentDto): JsonResponse
     {
         $response = $this->aciManager->makePayment($paymentDto);
-        return $this->json($response);
+        if ($response instanceof TransactionDTO) {
+            return $this->json($response,201);   //@fixme with enum constant
+        }
+        return $this->json($response,400);
     }
 }

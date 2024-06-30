@@ -28,7 +28,10 @@ class Shift4Controller extends AbstractController
     public function payment(#[MapRequestPayload] PaymentDto $paymentDto): JsonResponse
     {
         $response = $this->shift4Manager->makePayment($paymentDto);
-        return $this->json($response);
+        if ($response instanceof TransactionDTO) {
+            return $this->json($response,201);   //@fixme with enum constant
+        }
+        return $this->json($response,400);
     }
 
 }
