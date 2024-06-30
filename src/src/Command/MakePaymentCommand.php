@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Dto\PaymentDto;
 use App\Dto\TransactionDTO;
 use App\Manager\AciManager;
+use App\Manager\Shift4Manager;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -22,18 +23,20 @@ class MakePaymentCommand extends Command
 {
 
     private $aciManager;
+    private $shift4Manager;
     private $response;
 
-    public function __construct(AciManager $aciManager )
+    public function __construct(AciManager $aciManager,Shift4Manager $shift4Manager)
     {
         $this->aciManager = $aciManager;
+        $this->shift4Manager = $shift4Manager;
         parent::__construct();
     }
 
     protected function configure(): void
     {
         $this
-            ->addOption('payment', null, InputOption::VALUE_REQUIRED, 'aci|shift4')
+            ->addOption('m', null, InputOption::VALUE_REQUIRED, 'aci|shift4')
             ->addArgument('amount', InputArgument::REQUIRED, 'Amount')
             ->addArgument('currency', InputArgument::REQUIRED, 'Currency usd|euro')
             ->addArgument('cardNumber', InputArgument::REQUIRED, 'Card number')
@@ -61,16 +64,23 @@ class MakePaymentCommand extends Command
             $cardCvv
         );
 
-        if ($input->getOption('payment') == 'aci') {
+        if ($input->getOption('m') == 'aci') {
             $this->response = $this->aciManager->makePayment($paymentDto);
+        }
+        elseif ($input->getOption('m') == 'shift4') {
+            $this->response = $this->shift4Manager->makePayment($paymentDto);
+        }
+        else {
+            $io->error($this->response['Payment method not found, that must be input by option like --m=aci']);
         }
 
         if ($this->response instanceof TransactionDTO) {
-            $io->listing(json_decode(json_encode($this->response), true));
-            $io->success(json_decode(json_encode($this->response), true));
+            $io->success('Transaction was success with following response');
+            $io->writeln(json_decode(json_encode($this->response), true));
         } else {
             $io->error($this->response['error']);
         }
+
         return Command::SUCCESS;
     }
 }
